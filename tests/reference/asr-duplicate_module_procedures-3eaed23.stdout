@@ -1,0 +1,126 @@
+(TranslationUnit
+    (SymbolTable
+        1
+        {
+            input_module:
+                (Module
+                    (SymbolTable
+                        2
+                        {
+                            test_01:
+                                (Function
+                                    (SymbolTable
+                                        3
+                                        {
+                                            x:
+                                                (Variable
+                                                    3
+                                                    x
+                                                    []
+                                                    In
+                                                    ()
+                                                    ()
+                                                    Default
+                                                    (Integer 4)
+                                                    ()
+                                                    Source
+                                                    Public
+                                                    Required
+                                                    .false.
+                                                )
+                                        })
+                                    test_01
+                                    (FunctionType
+                                        [(Integer 4)]
+                                        ()
+                                        Source
+                                        Implementation
+                                        ()
+                                        .false.
+                                        .false.
+                                        .false.
+                                        .false.
+                                        .false.
+                                        []
+                                        .false.
+                                    )
+                                    []
+                                    [(Var 3 x)]
+                                    [(Print
+                                        (StringFormat
+                                            ()
+                                            [(Var 3 x)]
+                                            FormatFortran
+                                            (Character -1 0 () PointerString)
+                                            ()
+                                        )
+                                    )]
+                                    ()
+                                    Public
+                                    .false.
+                                    .false.
+                                    ()
+                                ),
+                            test_interface:
+                                (GenericProcedure
+                                    2
+                                    test_interface
+                                    [2 test_01
+                                    2 test_01
+                                    2 test_01]
+                                    Public
+                                )
+                        })
+                    input_module
+                    []
+                    .false.
+                    .false.
+                ),
+            main:
+                (Program
+                    (SymbolTable
+                        4
+                        {
+                            test_01:
+                                (ExternalSymbol
+                                    4
+                                    test_01
+                                    2 test_01
+                                    input_module
+                                    []
+                                    test_01
+                                    Public
+                                ),
+                            test_interface:
+                                (ExternalSymbol
+                                    4
+                                    test_interface
+                                    2 test_interface
+                                    input_module
+                                    []
+                                    test_interface
+                                    Public
+                                ),
+                            test_interface@test_01:
+                                (ExternalSymbol
+                                    4
+                                    test_interface@test_01
+                                    2 test_01
+                                    input_module
+                                    []
+                                    test_01
+                                    Private
+                                )
+                        })
+                    main
+                    [input_module]
+                    [(SubroutineCall
+                        4 test_interface@test_01
+                        4 test_interface
+                        [((IntegerConstant 1 (Integer 4) Decimal))]
+                        ()
+                    )]
+                )
+        })
+    []
+)
