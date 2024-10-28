@@ -20,11 +20,13 @@
 #include <libasr/pass/replace_init_expr.h>
 #include <libasr/pass/replace_implied_do_loops.h>
 #include <libasr/pass/replace_array_op.h>
+#include <libasr/pass/replace_array_op_simplifier.h>
 #include <libasr/pass/replace_select_case.h>
 #include <libasr/pass/wrap_global_stmts.h>
 #include <libasr/pass/replace_param_to_const.h>
 #include <libasr/pass/replace_print_arr.h>
 #include <libasr/pass/replace_where.h>
+#include <libasr/pass/replace_where_simplifier.h>
 #include <libasr/pass/replace_print_list_tuple.h>
 #include <libasr/pass/replace_arr_slice.h>
 #include <libasr/pass/replace_flip_sign.h>
@@ -47,6 +49,7 @@
 #include <libasr/pass/array_by_data.h>
 #include <libasr/pass/list_expr.h>
 #include <libasr/pass/create_subroutine_from_function.h>
+#include <libasr/pass/create_subroutine_from_function_simplifier.h>
 #include <libasr/pass/transform_optional_argument_functions.h>
 #include <libasr/pass/nested_vars.h>
 #include <libasr/pass/unique_symbols.h>
@@ -85,6 +88,7 @@ namespace LCompilers {
             {"global_stmts", &pass_wrap_global_stmts},
             {"implied_do_loops", &pass_replace_implied_do_loops},
             {"array_op", &pass_replace_array_op},
+            {"array_op_simplifier", &pass_replace_array_op_simplifier},
             {"symbolic", &pass_replace_symbolic},
             {"flip_sign", &pass_replace_flip_sign},
             {"intrinsic_function", &pass_replace_intrinsic_function},
@@ -107,10 +111,12 @@ namespace LCompilers {
             {"pass_list_expr", &pass_list_expr},
             {"pass_array_by_data", &pass_array_by_data},
             {"subroutine_from_function", &pass_create_subroutine_from_function},
+            {"subroutine_from_function_simplifier", &pass_create_subroutine_from_function_simplifier},
             {"transform_optional_argument_functions", &pass_transform_optional_argument_functions},
             {"init_expr", &pass_replace_init_expr},
             {"nested_vars", &pass_nested_vars},
             {"where", &pass_replace_where},
+            {"where_simplifier", &pass_replace_where_simplifier},
             {"function_call_in_declaration", &pass_replace_function_call_in_declaration},
             {"openmp", &pass_replace_openmp},
             {"print_struct_type", &pass_replace_print_struct_type},
@@ -222,13 +228,13 @@ namespace LCompilers {
                 "forall",
                 "class_constructor",
                 "pass_list_expr",
-                "where",
-                "subroutine_from_function", // To be re-written after simplifier is implemented.
-                "array_op", // To be re-written without creating any auxiliary variables or allocatables, everything already done by simplifier
+                "where_simplifier",
+                "subroutine_from_function_simplifier", // To be re-written after simplifier is implemented.
+                "array_op_simplifier", // To be re-written without creating any auxiliary variables or allocatables, everything already done by simplifier
                 "symbolic",
                 "intrinsic_function", // To be re-written without creating allocotables and auxiliary variables
                 "intrinsic_subroutine", // To be re-written without creating allocotables and auxiliary variables
-                "array_op",
+                "array_op_simplifier",
                 // "subroutine_from_function", There should be no need to apply this twice
                 // "array_op", There should be no need to apply this twice
                 "pass_array_by_data",
@@ -254,17 +260,17 @@ namespace LCompilers {
                 "simplifier", /* Verification checks to be implemented in this pass - 1. No array, user defined type variable should have a symbolic value. 2. Print, SubroutineCall, FileWrite, IntrinsicImpureSubroutine nodes shouldn't have non-Var arguments. 3. All expressions which need a temporary should be directly linked to a target via an assignment. 4. Sizes of auxiliary allocatables should be calculated using only Var nodes (with non-array symbols), or FunctionCall returning scalars. */
                 "nested_vars",
                 "transform_optional_argument_functions",
-                    "forall",
+                "forall",
                 "class_constructor",
                 "pass_list_expr",
-                "where",
-                "subroutine_from_function", // To be re-written after simplifier is implemented.
-                "array_op", // To be re-written without creating any auxiliary variables or allocatables, everything already done by simplifier
+                "where_simplifier",
+                "subroutine_from_function_simplifier", // To be re-written after simplifier is implemented.
+                "array_op_simplifier", // To be re-written without creating any auxiliary variables or allocatables, everything already done by simplifier
                 "symbolic",
                 "flip_sign",
                 "intrinsic_function", // To be re-written without creating allocotables and auxiliary variables
                 "intrinsic_subroutine", // To be re-written without creating allocotables and auxiliary variables
-                "array_op",
+                "array_op_simplifier",
                 // "subroutine_from_function", There should be no need to apply this twice
                 // "array_op", There should be no need to apply this twice
                 "pass_array_by_data",
@@ -394,9 +400,9 @@ namespace LCompilers {
                 } else if (!pass_options.fast && !pass_options.experimental_simplifier) {
                     apply_passes(al, asr, _passes, pass_options, diagnostics);
                 } else if (pass_options.fast && pass_options.experimental_simplifier){
-                    apply_passes(al, asr, _passes_with_experimental_simplifier, pass_options, diagnostics);
-                } else if (!pass_options.fast && pass_options.experimental_simplifier) {
                     apply_passes(al, asr, _with_optimization_passes_for_experimental_simplifier, pass_options, diagnostics);
+                } else if (!pass_options.fast && pass_options.experimental_simplifier) {
+                    apply_passes(al, asr, _passes_with_experimental_simplifier, pass_options, diagnostics);
                 }
             }
         }
