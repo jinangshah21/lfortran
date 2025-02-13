@@ -615,7 +615,8 @@ class EditProcedureCallsVisitor : public ASR::ASRPassBaseWalkVisitor<EditProcedu
                 if( ASRUtils::is_array(orig_arg_type) ) {
                     ASR::Array_t* array_t = ASR::down_cast<ASR::Array_t>(
                         ASRUtils::type_get_past_allocatable(ASRUtils::type_get_past_pointer(orig_arg_type)));
-                    if( array_t->m_physical_type != ASR::array_physical_typeType::PointerToDataArray ) {
+                    if( array_t->m_physical_type != ASR::array_physical_typeType::PointerToDataArray  && 
+                        !(ASR::is_a<ASR::Var_t>(*ASRUtils::extract_array_variable(orig_arg_i)) && ASRUtils::expr_intent(ASRUtils::extract_array_variable(orig_arg_i)) != ASR::intentType::Local)) {
                         ASR::expr_t* physical_cast = ASRUtils::EXPR(ASRUtils::make_ArrayPhysicalCast_t_util(
                             al, orig_arg_i->base.loc, orig_arg_i, array_t->m_physical_type,
                             ASR::array_physical_typeType::PointerToDataArray, ASRUtils::duplicate_type(al, orig_arg_type,
@@ -648,8 +649,11 @@ class EditProcedureCallsVisitor : public ASR::ASRPassBaseWalkVisitor<EditProcedu
             for ( size_t i = 0; i < n_args; i++ ) {
                 if( args[i].m_value &&
                     ASRUtils::expr_type(args[i].m_value) &&
-                    ASR::is_a<ASR::Pointer_t>(*
-                        ASRUtils::expr_type(args[i].m_value)) ) {
+                    (ASR::is_a<ASR::Pointer_t>(*
+                        ASRUtils::expr_type(args[i].m_value)) || 
+                     (ASRUtils::is_array(ASRUtils::expr_type(args[i].m_value)) && 
+                      ASR::is_a<ASR::Var_t>(*ASRUtils::extract_array_variable(args[i].m_value)) &&
+                      ASRUtils::expr_intent(ASRUtils::extract_array_variable(args[i].m_value)) != ASR::intentType::Local))) {
                     return false;
                 }
             }

@@ -3810,6 +3810,9 @@ static inline ASR::intentType symbol_intent(const ASR::symbol_t *f)
 }
 
 static inline ASR::intentType expr_intent(ASR::expr_t* expr) {
+    if(ASR::is_a<ASR::ArrayPhysicalCast_t>(*expr)) {
+        expr = ASR::down_cast<ASR::ArrayPhysicalCast_t>(expr)->m_arg;
+    }
     switch( expr->type ) {
         case ASR::exprType::Var: {
             return ASRUtils::symbol_intent(ASR::down_cast<ASR::Var_t>(expr)->m_v);
@@ -6161,6 +6164,8 @@ static inline ASR::expr_t* extract_array_variable(ASR::expr_t* x) {
         return ASR::down_cast<ASR::ArrayItem_t>(x)->m_v;
     } else if( x->type == ASR::exprType::ArraySection ) {
         return ASR::down_cast<ASR::ArraySection_t>(x)->m_v;
+    } else if(x->type == ASR::exprType::ArrayPhysicalCast) {
+        return extract_array_variable(ASR::down_cast<ASR::ArrayPhysicalCast_t>(x)->m_arg);
     }
 
     return x;
