@@ -2202,4 +2202,4 @@ RUN(NAME separate_compilation_02 LABELS gfortran llvm llvm_goc EXTRAFILES separa
 RUN(NAME no_explicit_return_type_01 LABELS gfortran llvm llvm_wasm llvm_wasm_emcc
     EXTRA_ARGS --implicit-typing)
 
-RUN(NAME formatted_read_1 LABELS gfortran llvm)
+RUN(NAME formatted_read_1 LABELS gfortran llvm EXTRA_ARGS --cpp)
