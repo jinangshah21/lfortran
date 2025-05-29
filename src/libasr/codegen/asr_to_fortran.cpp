@@ -231,17 +231,18 @@ public:
                         }
                     }
                 }
-                r = get_type(arr_type->m_type) + ", dimension(" + bounds + ")";
+                r = get_type(arr_type->m_type, type_decl) + ", dimension(" + bounds + ")";
                 break;
             } case ASR::ttypeType::Allocatable: {
-                r = get_type(down_cast<ASR::Allocatable_t>(t)->m_type) + ", allocatable";
+                r = get_type(down_cast<ASR::Allocatable_t>(t)->m_type, type_decl) + ", allocatable";
                 break;
             } case ASR::ttypeType::Pointer: {
-                r = get_type(down_cast<ASR::Pointer_t>(t)->m_type) + ", pointer";
+                r = get_type(down_cast<ASR::Pointer_t>(t)->m_type, type_decl) + ", pointer";
                 break;
             } case ASR::ttypeType::StructType: {
                 ASR::StructType_t* struct_type = down_cast<ASR::StructType_t>(t);
-                std::string struct_name = ASRUtils::symbol_name(struct_type->m_derived_type);
+                LCOMPILERS_ASSERT(type_decl != nullptr);
+                std::string struct_name = ASRUtils::symbol_name(type_decl);
                 r = "type(";
                 r += struct_name;
                 r += ")";
@@ -502,7 +503,12 @@ public:
                 !ASRUtils::is_allocatable(ASRUtils::expr_type(x.m_return_var)) &&
                 !ASRUtils::is_pointer(ASRUtils::expr_type(x.m_return_var))) {
                 is_return_var_declared = true;
-                r += get_type(ASRUtils::expr_type(x.m_return_var));
+                if (ASR::is_a<ASR::StructType_t>(*ASRUtils::extract_type(ASRUtils::expr_type(x.m_return_var)))) {
+                    ASR::symbol_t* type_decl = ASRUtils::get_struct_sym(x.m_return_var);
+                    r += get_type(ASRUtils::expr_type(x.m_return_var), type_decl);
+                } else {
+                    r += get_type(ASRUtils::expr_type(x.m_return_var));
+                }
                 r += " ";
             }
             r += "function";

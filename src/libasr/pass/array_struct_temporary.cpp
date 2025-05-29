@@ -2333,15 +2333,15 @@ class TransformVariableInitialiser:
         n_body = body.size();
     }
 
-    void visit_StructType(const ASR::StructType_t& x) {
-        std::string derived_type_name = ASRUtils::symbol_name(x.m_derived_type);
-        if( x.m_derived_type == current_scope->resolve_symbol(derived_type_name) ) {
-            return ;
-        }
+    // void visit_StructType(const ASR::StructType_t& x) {
+    //     std::string derived_type_name = ASRUtils::symbol_name(x.m_derived_type);
+    //     if( x.m_derived_type == current_scope->resolve_symbol(derived_type_name) ) {
+    //         return ;
+    //     }
 
-        ASR::StructType_t& xx = const_cast<ASR::StructType_t&>(x);
-        xx.m_derived_type = current_scope->resolve_symbol(derived_type_name);
-    }
+    //     ASR::StructType_t& xx = const_cast<ASR::StructType_t&>(x);
+    //     xx.m_derived_type = current_scope->resolve_symbol(derived_type_name);
+    // }
 
 };
 

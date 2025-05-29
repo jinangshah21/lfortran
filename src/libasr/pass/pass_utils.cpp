@@ -121,7 +121,8 @@ namespace LCompilers {
             args.push_back(al, ai);
             ASR::ttype_t* array_ref_type = ASRUtils::duplicate_type_without_dims(
                 al, ASRUtils::expr_type(arr_expr), arr_expr->base.loc);
-            fix_struct_type_scope()
+            array_ref_type = ASRUtils::extract_type(ASRUtils::expr_type(arr_expr));
+            // fix_struct_type_scope()
             ASR::expr_t* array_ref = ASRUtils::EXPR(ASRUtils::make_ArrayItem_t_util(al,
                                         arr_expr->base.loc, arr_expr,
                                         args.p, args.size(),
@@ -184,7 +185,10 @@ namespace LCompilers {
             }
             ASR::ttype_t* array_ref_type = ASRUtils::duplicate_type_without_dims(
                 al, ASRUtils::expr_type(arr_expr), arr_expr->base.loc);
-            fix_struct_type_scope()
+            if (current_scope && ASR::is_a<ASR::StructType_t>(*ASRUtils::extract_type(array_ref_type))) { 
+                array_ref_type = ASRUtils::extract_type(ASRUtils::expr_type(arr_expr));
+            }
+            // fix_struct_type_scope()
             array_ref = ASRUtils::EXPR(ASRUtils::make_ArrayItem_t_util(al,
                                         arr_expr->base.loc, arr_expr,
                                         args.p, args.size(),
@@ -231,7 +235,10 @@ namespace LCompilers {
             empty_dims.reserve(al, 1);
             ASR::ttype_t* array_ref_type = array_section->m_type;
             array_ref_type = ASRUtils::duplicate_type_without_dims(al, array_ref_type, loc);
-            fix_struct_type_scope()
+            if (current_scope && ASR::is_a<ASR::StructType_t>(*ASRUtils::extract_type(array_ref_type))) { 
+                array_ref_type = ASRUtils::extract_type(ASRUtils::expr_type(array_section->m_v));
+            }
+            // fix_struct_type_scope()
             ASR::expr_t* array_ref = ASRUtils::EXPR(ASRUtils::make_ArrayItem_t_util(al,
                                         loc, array_section->m_v,
                                         args.p, args.size(),
@@ -259,6 +266,9 @@ namespace LCompilers {
                 args.push_back(al, ai);
             }
             ASR::ttype_t* array_ref_type = ASRUtils::duplicate_type_without_dims(al, _type, loc);
+            if (current_scope && ASR::is_a<ASR::StructType_t>(*ASRUtils::extract_type(array_ref_type))) { 
+                array_ref_type = ASRUtils::extract_type(ASRUtils::symbol_type(arr));
+            }
             fix_struct_type_scope()
             ASR::expr_t* arr_var = ASRUtils::EXPR(ASR::make_Var_t(al, loc, arr));
             ASR::expr_t* array_ref = ASRUtils::EXPR(ASRUtils::make_ArrayItem_t_util(al, loc, arr_var,

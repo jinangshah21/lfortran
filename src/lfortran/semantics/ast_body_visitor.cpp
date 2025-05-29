@@ -2293,9 +2293,9 @@ public:
                     // Check struct-type members
                     if(ASR::is_a<ASR::StructType_t>(*ASRUtils::symbol_type(sym)) &&
                         ASR::down_cast<ASR::Variable_t>(orig_sym)->m_intent == ASR::intentType::Out){
-                        ASR::StructType_t* struct_type_instance = ASR::down_cast<ASR::StructType_t>(var->m_type);
+                        // ASR::symbol_t* type_decl = ASR::down_cast<ASR::StructType_t>(var->m_type_declaration);
                         ASR::Struct_t* struct_type = ASR::down_cast<ASR::Struct_t>(
-                            ASRUtils::symbol_get_past_external(struct_type_instance->m_derived_type));
+                            ASRUtils::symbol_get_past_external(var->m_type_declaration));
                         SymbolTable* sym_table_of_struct = struct_type->m_symtab;
                         for(auto struct_member : sym_table_of_struct->get_scope()){
                             if(ASR::is_a<ASR::Variable_t>(*struct_member.second) &&
@@ -3959,7 +3959,7 @@ public:
                 if (v_expr &&
                     x.n_member >= 1 &&
                     ASR::is_a<ASR::StructType_t>(*ASRUtils::expr_type(v_expr)) &&
-                    (ASRUtils::symbol_get_past_external(ASR::down_cast<ASR::StructType_t>(ASRUtils::expr_type(v_expr))->m_derived_type)) !=
+                    (ASRUtils::symbol_get_past_external(ASRUtils::EXPR2VAR(v_expr)->m_type_declaration)) !=
                         ASRUtils::get_asr_owner(ASRUtils::symbol_get_past_external(original_sym))) {
                     for (size_t i = 0; i < p->n_procs; i++) {
                         final_sym = resolve_deriv_type_proc(x.base.base.loc, ASRUtils::symbol_name(p->m_procs[i]),

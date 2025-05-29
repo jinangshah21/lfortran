@@ -132,8 +132,8 @@ public:
             ASR::ttype_t* sym_type = ASRUtils::type_get_past_pointer(
                                         ASRUtils::symbol_type(sym));
             if( ASR::is_a<ASR::StructType_t>(*sym_type) ) {
-                ASR::StructType_t* struct_t = ASR::down_cast<ASR::StructType_t>(sym_type);
-                ASR::symbol_t* der_sym = struct_t->m_derived_type;
+                // ASR::StructType_t* struct_t = ASR::down_cast<ASR::StructType_t>(sym_type);
+                ASR::symbol_t* der_sym = ASRUtils::get_struct_sym(sym);
                 if( ASR::is_a<ASR::ExternalSymbol_t>(*der_sym) &&
                     ASR::down_cast<ASR::ExternalSymbol_t>(der_sym)->m_external == nullptr &&
                     ASR::down_cast<ASR::ExternalSymbol_t>(der_sym)->m_module_name == nullptr ) {
@@ -146,7 +146,7 @@ public:
                                 diag::Label("", {der_sym->base.loc})}));
                         throw SemanticAbort();
                     }
-                    struct_t->m_derived_type = sym_;
+                    // struct_t->m_derived_type = sym_;
                 }
             }
         }
@@ -1842,7 +1842,7 @@ public:
             if (item.first != "~abstract_type") {
                 ASR::ttype_t* var_type = ASRUtils::type_get_past_pointer(ASRUtils::symbol_type(item.second));
                 if( ASR::is_a<ASR::StructType_t>(*var_type) ) {
-                    ASR::symbol_t* sym = ASR::down_cast<ASR::StructType_t>(var_type)->m_derived_type;
+                    ASR::symbol_t* sym = ASRUtils::get_struct_sym(item.second);
                     aggregate_type_name = ASRUtils::symbol_name(sym);
                 } else if( ASR::is_a<ASR::ClassType_t>(*var_type) ) {
                     ASR::symbol_t* sym = ASR::down_cast<ASR::ClassType_t>(var_type)->m_class_type;

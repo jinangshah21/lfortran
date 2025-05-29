@@ -548,7 +548,7 @@ public:
             char* aggregate_type_name = nullptr;
             ASR::symbol_t* sym = nullptr;
             if( ASR::is_a<ASR::StructType_t>(*var_type) ) {
-                sym = ASR::down_cast<ASR::StructType_t>(var_type)->m_derived_type;
+                sym = ASRUtils::get_struct_sym(a.second);
                 aggregate_type_name = ASRUtils::symbol_name(sym);
             } else if( ASR::is_a<ASR::EnumType_t>(*var_type) ) {
                 sym = ASR::down_cast<ASR::EnumType_t>(var_type)->m_enum_type;
@@ -1024,7 +1024,7 @@ public:
         ASR::symbol_t *type_sym=nullptr;
         switch (t2->type) {
             case (ASR::ttypeType::StructType): {
-                type_sym = ASR::down_cast<ASR::StructType_t>(t2)->m_derived_type;
+                type_sym = ASRUtils::get_struct_sym(dt);
                 break;
             }
             case (ASR::ttypeType::ClassType): {
@@ -1062,7 +1062,7 @@ public:
         ASR::symbol_t *parent = nullptr;
         switch (t2->type) {
             case (ASR::ttypeType::StructType): {
-                type_sym = ASR::down_cast<ASR::StructType_t>(t2)->m_derived_type;
+                type_sym = ASRUtils::get_struct_sym(dt);
                 type_sym = ASRUtils::symbol_get_past_external(type_sym);
                 ASR::Struct_t* der_type = ASR::down_cast<ASR::Struct_t>(type_sym);
                 parent = der_type->m_parent;
@@ -1189,17 +1189,17 @@ public:
         visit_ttype(*x.m_type);
     }
 
-    void visit_StructType(const StructType_t &x) {
-        std::string symbol_owner = "global scope";
-        if( ASRUtils::get_asr_owner(x.m_derived_type) ) {
-            symbol_owner = ASRUtils::symbol_name(ASRUtils::get_asr_owner(x.m_derived_type));
-        }
-        require(symtab_in_scope(current_symtab, x.m_derived_type),
-            "StructType::m_derived_type '" +
-            std::string(ASRUtils::symbol_name(x.m_derived_type)) +
-            "' cannot point outside of its symbol table, owner: " +
-            symbol_owner);
-    }
+    // void visit_StructType(const StructType_t &x) {
+    //     std::string symbol_owner = "global scope";
+    //     if( ASRUtils::get_asr_owner(x.m_derived_type) ) {
+    //         symbol_owner = ASRUtils::symbol_name(ASRUtils::get_asr_owner(x.m_derived_type));
+    //     }
+    //     require(symtab_in_scope(current_symtab, x.m_derived_type),
+    //         "StructType::m_derived_type '" +
+    //         std::string(ASRUtils::symbol_name(x.m_derived_type)) +
+    //         "' cannot point outside of its symbol table, owner: " +
+    //         symbol_owner);
+    // }
 
     void visit_ArrayConstructor(const ArrayConstructor_t& x) {
         require(ASRUtils::is_array(x.m_type),

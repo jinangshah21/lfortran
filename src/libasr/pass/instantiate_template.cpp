@@ -690,16 +690,16 @@ public:
                     substitute_type(tlist->m_type)));
             }
             case (ASR::ttypeType::StructType) : {
-                ASR::StructType_t *s = ASR::down_cast<ASR::StructType_t>(ttype);
-                std::string struct_name = ASRUtils::symbol_name(s->m_derived_type);
-                if (context_map.find(struct_name) != context_map.end()) {
-                    std::string new_struct_name = context_map[struct_name];
-                    ASR::symbol_t *sym = func_scope->resolve_symbol(new_struct_name);
-                    return ASRUtils::TYPE(
-                        ASRUtils::make_StructType_t_util(al, s->base.base.loc, sym));
-                } else {
+                // ASR::StructType_t *s = ASR::down_cast<ASR::StructType_t>(ttype);
+                // std::string struct_name = ASRUtils::symbol_name(s->m_derived_type);
+                // if (context_map.find(struct_name) != context_map.end()) {
+                //     std::string new_struct_name = context_map[struct_name];
+                //     ASR::symbol_t *sym = func_scope->resolve_symbol(new_struct_name);
+                //     return ASRUtils::TYPE(
+                //         ASRUtils::make_StructType_t_util(al, s->base.base.loc, sym));
+                // } else {
                     return ttype;
-                }
+                // }
             }
             case (ASR::ttypeType::Array) : {
                 ASR::Array_t *a = ASR::down_cast<ASR::Array_t>(ttype);

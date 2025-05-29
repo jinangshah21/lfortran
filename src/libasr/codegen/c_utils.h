@@ -295,8 +295,8 @@ namespace CUtils {
                 break;
             }
             case ASR::ttypeType::StructType: {
-                ASR::StructType_t* der_type = ASR::down_cast<ASR::StructType_t>(t);
-                type_src = std::string("struct ") + ASRUtils::symbol_name(der_type->m_derived_type);
+                // ASR::StructType_t* der_type = ASR::down_cast<ASR::StructType_t>(t);
+                // type_src = std::string("struct ") + ASRUtils::symbol_name(der_type->m_derived_type);
                 break;
             }
             case ASR::ttypeType::List: {
